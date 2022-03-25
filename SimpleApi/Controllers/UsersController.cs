@@ -1,16 +1,29 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SimpleApi.Models;
+using SimpleApi.Services;
 
 namespace SimpleApi.Controllers
 {
-    public class UsersController : ControllerBase
+    public class UsersController : MyControllerBase
     {
-        private readonly SimpleApiContext _context;
-
-        public UsersController(SimpleApiContext context)
+        private readonly IUserService _userService;
+        public UsersController(SimpleApiContext context, IUserService userService) : base(context)
         {
-            _context = context;
+            _userService = userService;
+        }
+
+        [HttpPost("authenticate")]
+        [AllowAnonymous]
+        public IActionResult Authenticate(AuthenticateRequest model)
+        {
+            var response = _userService.Authenticate(model);
+
+            if (response == null)
+                return BadRequest(new { message = "Username or password is incorrect" });
+
+            return Ok(response);
         }
 
         [HttpGet]

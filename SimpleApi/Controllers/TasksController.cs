@@ -6,15 +6,11 @@ using Task = SimpleApi.Models.Task;
 
 namespace SimpleApi.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class TasksController : ControllerBase
+    public class TasksController : MyControllerBase
     {
-        private readonly SimpleApiContext _context;
-
-        public TasksController(SimpleApiContext context)
+        public TasksController(SimpleApiContext context): base(context)
         {
-            _context = context;
+
         }
 
         // GET: api/Tasks

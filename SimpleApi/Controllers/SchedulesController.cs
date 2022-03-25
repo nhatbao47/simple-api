@@ -4,13 +4,13 @@ using SimpleApi.Models;
 
 namespace SimpleApi.Controllers
 {
-    public class SchedulesController : ControllerBase
+    [Route("api/[controller]")]
+    [ApiController]
+    public class SchedulesController : MyControllerBase
     {
-        private readonly SimpleApiContext _context;
-
-        public SchedulesController(SimpleApiContext context)
+        public SchedulesController(SimpleApiContext context): base(context)
         {
-            _context = context;
+
         }
         
         [HttpGet]
