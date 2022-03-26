@@ -1,19 +1,18 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿namespace SimpleApi.Controllers;
+
 using Microsoft.AspNetCore.Mvc;
-using SimpleApi.Models;
+using SimpleApi.Entities;
+using AuthorizeAttribute = SimpleApi.Helpers.AuthorizeAttribute;
 
-namespace SimpleApi.Controllers
+[Authorize]
+[ApiController]
+[Route("api/[controller]")]
+public class MyControllerBase : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    [Authorize]
-    public class MyControllerBase : ControllerBase
-    {
-        protected readonly SimpleApiContext _context;
+    protected readonly SimpleApiContext _context;
 
-        public MyControllerBase (SimpleApiContext context)
-        {
-            _context = context;
-        }
+    public MyControllerBase (SimpleApiContext context)
+    {
+        _context = context;
     }
 }

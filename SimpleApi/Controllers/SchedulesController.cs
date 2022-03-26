@@ -1,88 +1,82 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿namespace SimpleApi.Controllers;
+
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SimpleApi.Models;
+using SimpleApi.Entities;
 
-namespace SimpleApi.Controllers
+public class SchedulesController : MyControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class SchedulesController : MyControllerBase
+    public SchedulesController(SimpleApiContext context): base(context) { }
+    
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<Schedule>>> GetSchedules()
     {
-        public SchedulesController(SimpleApiContext context): base(context)
+        return await _context.Schedules.ToListAsync();
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Schedule>> GetSchedule(int id)
+    {
+        var schedule = await _context.Schedules.FindAsync(id);
+
+        if (schedule == null)
         {
-
-        }
-        
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Schedule>>> GetSchedules()
-        {
-            return await _context.Schedules.ToListAsync();
-        }
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Schedule>> GetSchedule(int id)
-        {
-            var schedule = await _context.Schedules.FindAsync(id);
-
-            if (schedule == null)
-            {
-                return NotFound();
-            }
-
-            return schedule;
+            return NotFound();
         }
 
-        [HttpPost]
-        public async Task<ActionResult<Schedule>> PostSchedule(Schedule schedule)
+        return schedule;
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<Schedule>> PostSchedule(Schedule schedule)
+    {
+        _context.Schedules.Add(schedule);
+        await _context.SaveChangesAsync();
+        return CreatedAtAction("GetSchedule", new {id = schedule.Id}, schedule);
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> PutSchedule(int id, Schedule schedule)
+    {
+        if (id != schedule.Id)
         {
-            _context.Schedules.Add(schedule);
+            return BadRequest();
+        }
+
+        _context.Entry(schedule).State = EntityState.Modified;
+        try
+        {
             await _context.SaveChangesAsync();
-            return CreatedAtAction("GetSchedule", new {id = schedule.Id}, schedule);
         }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutSchedule(int id, Schedule schedule)
+        catch (DbUpdateConcurrencyException)
         {
-            if (id != schedule.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(schedule).State = EntityState.Modified;
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ScheduleExist(id))
-                {
-                    return NotFound();
-                }
-
-                throw;
-            }
-
-            return NoContent();
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteSchedule(int id)
-        {
-            var schedule = await _context.Schedules.FindAsync(id);
-            if (schedule == null)
+            if (!ScheduleExist(id))
             {
                 return NotFound();
             }
 
-            _context.Schedules.Remove(schedule);
-            return NoContent();
-
+            throw;
         }
 
-        private bool ScheduleExist(int id)
+        return NoContent();
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteSchedule(int id)
+    {
+        var schedule = await _context.Schedules.FindAsync(id);
+        if (schedule == null)
         {
-            return _context.Schedules.Any(d => d.Id == id);
+            return NotFound();
         }
+
+        _context.Schedules.Remove(schedule);
+        return NoContent();
+
+    }
+
+    private bool ScheduleExist(int id)
+    {
+        return _context.Schedules.Any(d => d.Id == id);
     }
 }

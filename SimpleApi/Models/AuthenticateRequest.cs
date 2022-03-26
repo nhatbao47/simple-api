@@ -1,13 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SimpleApi.Models
-{
-    public class AuthenticateRequest
-    {
-        [Required]
-        public string Username { get; set; }
+namespace SimpleApi.Models;
 
-        [Required]
-        public string Password { get; set; }
-    }
+public class AuthenticateRequest
+{
+    [Required]
+    public string Username { get; set; }
+
+    [Required]
+    public string Password { get; set; }
 }
