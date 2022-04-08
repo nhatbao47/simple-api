@@ -93,6 +93,7 @@ public class UsersController : MyControllerBase
 
         _context.Users.Remove(user);
         await _context.SaveChangesAsync();
+
         return NoContent();
     }
 

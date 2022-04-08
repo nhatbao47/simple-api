@@ -71,6 +71,8 @@ public class SchedulesController : MyControllerBase
         }
 
         _context.Schedules.Remove(schedule);
+        await _context.SaveChangesAsync();
+
         return NoContent();
 
     }
